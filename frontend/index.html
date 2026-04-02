@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="neon">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GTA RP Финансы — v3.0</title>
+  <meta name="description" content="Профессиональный трекер финансов для GTA RP с модулем 5VITO" />
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+  <link rel="stylesheet" href="./src/app.css" />
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ШАПКА ПРИЛОЖЕНИЯ                                          -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<header class="app-header">
+  <div class="header-left">
+    <div class="app-logo">
+      <span class="logo-icon">🌙</span>
+      <span class="logo-title">GTA RP Финансы</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="theme-switcher">
+      <button class="theme-btn" data-theme="neon"    title="Неон">🌙</button>
+      <button class="theme-btn" data-theme="dark"    title="Тёмная">⚫</button>
+      <button class="theme-btn" data-theme="galaxy"  title="Галактика">🌌</button>
+      <button class="theme-btn" data-theme="sunset"  title="Закат">🌅</button>
+    </div>
+    <button id="btn-sound-toggle" class="icon-btn" title="Звуки вкл/выкл">🔊</button>
+    <button id="btn-settings"     class="icon-btn" title="Настройки">⚙️</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- ОСНОВНОЙ КОНТЕНТ (вкладки)                                -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<main class="app-main">
+
+  <!-- ── DASHBOARD ─────────────────────────────────────────── -->
+  <section id="page-dashboard" class="tab-page" style="display:none">
+
+    <!-- Виджет баланса -->
+    <div class="balance-widget glass-card">
+      <div class="bal-header">
+        <span class="bal-label">Текущий баланс</span>
+        <span class="bal-subtitle">GTA RP кошелёк</span>
+      </div>
+      <div class="bal-value" id="bal-value">0$</div>
+      <!-- Прогресс-бар цели -->
+      <div id="goal-bar-wrap" style="display:none" class="goal-bar-wrap">
+        <div class="goal-bar-track">
+          <div class="goal-bar-fill" id="goal-bar-fill"></div>
+        </div>
+        <span class="goal-bar-label" id="goal-bar-label"></span>
+      </div>
+    </div>
+
+    <!-- Выбор категории (Segmented Control) -->
+    <div class="section-block glass-card">
+      <div class="section-head">
+        <h2 class="section-title">Категория</h2>
+      </div>
+      <div id="category-seg"></div>
+    </div>
+
+    <!-- Форма ввода операции -->
+    <div class="section-block glass-card">
+      <div class="section-head">
+        <h2 class="section-title">Новая операция</h2>
+      </div>
+
+      <!-- ДОХОДЫ -->
+      <div id="form-income" style="display:none" class="op-form">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Сумма ($)</label>
+            <input type="number" id="income-amount" class="neon-input" placeholder="0" min="0" step="any" autofocus />
+          </div>
+          <div class="form-group flex-2">
+            <label class="form-label">Описание (необязательно)</label>
+            <input type="text" id="income-desc" class="neon-input" placeholder="Откуда доход…" />
+          </div>
+        </div>
+        <div class="quick-buttons">
+          <button class="quick-btn quick-income" data-desc="Зарплата">💰 Зарплата</button>
+          <button class="quick-btn quick-income" data-desc="Дальнобойщик">🚛 Дальнобойщик</button>
+          <button class="quick-btn quick-income" data-desc="Строитель">🏗️ Строитель</button>
+          <button class="quick-btn quick-income" data-desc="Шахтёр">⛏️ Шахтёр</button>
+          <button class="quick-btn quick-income" data-desc="Курьер">🛵 Курьер</button>
+          <button class="quick-btn quick-income" data-desc="Дайвер">🤿 Дайвер</button>
+          <button class="quick-btn quick-income" data-desc="Рыбалка">🎣 Рыбалка</button>
+        </div>
+      </div>
+
+      <!-- ТРАТЫ -->
+      <div id="form-expense" style="display:none" class="op-form">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Сумма ($)</label>
+            <input type="number" id="expense-amount" class="neon-input" placeholder="0" min="0" step="any" />
+          </div>
+          <div class="form-group flex-2">
+            <label class="form-label">Описание</label>
+            <input type="text" id="expense-desc" class="neon-input" placeholder="На что потратил…" />
+          </div>
+        </div>
+        <div class="quick-buttons">
+          <button class="quick-btn quick-expense" data-desc="Квартира">🏠 Квартира</button>
+          <button class="quick-btn quick-expense" data-desc="Дом">🏡 Дом</button>
+          <button class="quick-btn quick-expense" data-desc="Объявления">📢 Объявления</button>
+          <button class="quick-btn quick-expense" data-desc="Бензин">⛽ Бензин</button>
+          <button class="quick-btn quick-expense" data-desc="Эвакуация">🚗 Эвакуация</button>
+        </div>
+      </div>
+
+      <!-- АРЕНДА -->
+      <div id="form-rent" style="display:none" class="op-form">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Цена/час ($)</label>
+            <input type="number" id="rent-price" class="neon-input" placeholder="5500" min="0" step="100" />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Часы</label>
+            <div class="hours-row">
+              <input type="number" id="rent-hours" class="neon-input" placeholder="0" min="0" step="1" />
+              <button class="hour-chip rent-hour-btn" data-h="1">+1ч</button>
+              <button class="hour-chip rent-hour-btn" data-h="2">+2ч</button>
+              <button class="hour-chip rent-hour-btn" data-h="4">+4ч</button>
+            </div>
+          </div>
+        </div>
+        <div class="quick-buttons">
+          <button class="quick-btn" id="rent-preset1">🚀 5500/1ч</button>
+          <button class="quick-btn" id="rent-preset2">🚀 5500/2ч</button>
+        </div>
+      </div>
+
+      <!-- КОЛЁСА -->
+      <div id="form-wheels" style="display:none" class="op-form">
+        <div class="wheels-mode-row">
+          <button class="wheels-mode-btn active" id="wheels-chips-btn">🎰 Фишки ×95</button>
+          <button class="wheels-mode-btn" id="wheels-money-btn">💵 Деньги</button>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label" id="wheels-amount-lbl">Количество фишек</label>
+            <input type="number" id="wheels-amount" class="neon-input" placeholder="0" min="0" step="any" />
+          </div>
+          <div class="form-group flex-1 wheels-result-wrap">
+            <label class="form-label">Итого</label>
+            <div class="wheels-result-box" id="wheels-result">= 0$</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ВЕКСЕЛИ -->
+      <div id="form-bonds" style="display:none" class="op-form">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Кол-во векселей</label>
+            <input type="number" id="bonds-amount" class="neon-input" placeholder="0" min="0" step="1" />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Итого (×1000)</label>
+            <div class="wheels-result-box" id="bonds-result">= 0$</div>
+          </div>
+        </div>
+      </div>
+
+      <button id="btn-add-op" class="add-op-btn">
+        <span>➕</span> Добавить операцию
+      </button>
+    </div>
+
+    <!-- Итоги за период -->
+    <div class="section-block glass-card">
+      <div class="section-head">
+        <h2 class="section-title" id="total-toggle-label">По категории</h2>
+        <label class="toggle-switch">
+          <input type="checkbox" id="total-toggle" />
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-label-text">Показать общее</span>
+        </label>
+      </div>
+      <div class="totals-row">
+        <div class="total-card">
+          <div class="total-card-icon">☀️</div>
+          <div class="total-val" id="total-day">0$</div>
+          <div class="total-card-label">Сегодня</div>
+        </div>
+        <div class="total-card">
+          <div class="total-card-icon">📅</div>
+          <div class="total-val" id="total-week">0$</div>
+          <div class="total-card-label">Неделя</div>
+        </div>
+        <div class="total-card">
+          <div class="total-card-icon">📊</div>
+          <div class="total-val" id="total-month">0$</div>
+          <div class="total-card-label">Месяц</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- История операций -->
+    <div class="section-block glass-card history-block">
+      <div class="section-head">
+        <h2 class="section-title">Последние операции</h2>
+        <div class="history-actions">
+          <button id="btn-undo"  class="action-btn" disabled>↩ Отменить</button>
+          <button id="btn-clear" class="action-btn danger">🗑️ Очистить</button>
+        </div>
+      </div>
+      <div id="history-list" class="history-list"></div>
+    </div>
+  </section>
+
+  <!-- ── STATISTICS ─────────────────────────────────────────── -->
+  <section id="page-statistics" class="tab-page" style="display:none">
+    <div class="section-block glass-card">
+      <div class="section-head">
+        <h2 class="section-title">Статистика</h2>
+        <span class="stat-badge">Без 5VITO</span>
+      </div>
+
+      <!-- Фильтры -->
+      <div class="stats-filters">
+        <div class="filter-group">
+          <label class="form-label">С:</label>
+          <input type="date" id="stats-start" class="neon-input date-input" />
+        </div>
+        <div class="filter-group">
+          <label class="form-label">По:</label>
+          <input type="date" id="stats-end" class="neon-input date-input" />
+        </div>
+        <button id="stats-apply" class="action-btn">🔍 Применить</button>
+        <button id="stats-reset" class="action-btn secondary">❌ Сбросить</button>
+      </div>
+
+      <!-- Сводка -->
+      <div class="stats-summary-row">
+        <div class="stats-summary-card">
+          <div class="stats-summary-label">Период</div>
+          <div class="stats-summary-val" id="stats-period">—</div>
+        </div>
+        <div class="stats-summary-card">
+          <div class="stats-summary-label">Операций</div>
+          <div class="stats-summary-val" id="stats-ops-count">0</div>
+        </div>
+        <div class="stats-summary-card">
+          <div class="stats-summary-label">Итого</div>
+          <div class="stats-summary-val" id="stats-total">0$</div>
+        </div>
+        <div class="stats-summary-card">
+          <div class="stats-summary-label">Дней</div>
+          <div class="stats-summary-val" id="stats-days">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Сетка дней -->
+    <div id="stats-grid" class="stats-grid"></div>
+  </section>
+
+  <!-- ── SHIFT TIMER ───────────────────────────────────────── -->
+  <section id="page-shift" class="tab-page" style="display:none">
+    <div class="section-block glass-card">
+      <h2 class="section-title">Выбор работы</h2>
+      <div id="job-type-grid" class="job-type-grid"></div>
+    </div>
+
+    <!-- Таймер -->
+    <div class="section-block glass-card timer-card">
+      <div class="shift-timer-display" id="shift-timer">00:00:00</div>
+      <div class="shift-eph-row">
+        <span class="eph-label">$/ч (прогноз):</span>
+        <span class="eph-val" id="shift-eph">—</span>
+      </div>
+      <div id="shift-earnings-group" style="display:none" class="earnings-group">
+        <label class="form-label">Заработано за смену ($)</label>
+        <input type="number" id="shift-earnings" class="neon-input" placeholder="0" min="0" step="any" />
+      </div>
+      <div class="shift-btn-row">
+        <button id="shift-start-btn" class="add-op-btn shift-start-btn">▶ Начать смену</button>
+        <button id="shift-stop-btn"  class="add-op-btn shift-stop-btn" disabled>⏹ Завершить смену</button>
+      </div>
+    </div>
+
+    <!-- История смен -->
+    <div class="section-block glass-card">
+      <h2 class="section-title">История смен</h2>
+      <div id="shift-history" class="shift-history-list"></div>
+    </div>
+  </section>
+
+  <!-- ── INSIGHTS ──────────────────────────────────────────── -->
+  <section id="page-insights" class="tab-page" style="display:none">
+    <div class="section-block glass-card">
+      <h2 class="section-title">📈 Прогноз</h2>
+      <div id="forecast-cards" class="forecast-grid"></div>
+    </div>
+    <div class="section-block glass-card">
+      <h2 class="section-title">🏆 Рекорды</h2>
+      <div id="records-cards" class="records-grid"></div>
+    </div>
+  </section>
+
+  <!-- ── 5VITO ─────────────────────────────────────────────── -->
+  <section id="page-vito" class="tab-page" style="display:none">
+
+    <!-- Локальная статистика -->
+    <div class="vito-header-banner glass-card">
+      <div class="vito-logo">
+        <span class="vito-logo-icon">💎</span>
+        <div>
+          <div class="vito-logo-title">5ВИТО</div>
+          <div class="vito-logo-sub">Торговый терминал</div>
+        </div>
+      </div>
+      <div class="vito-stats-row">
+        <div class="vito-stat">
+          <div class="vito-stat-label">Объём продаж</div>
+          <div class="vito-stat-val positive" id="vito-total-volume">0$</div>
+        </div>
+        <div class="vito-stat">
+          <div class="vito-stat-label">Транзакций</div>
+          <div class="vito-stat-val" id="vito-tx-count">0</div>
+        </div>
+        <div class="vito-stat">
+          <div class="vito-stat-label">Общий баланс</div>
+          <div class="vito-stat-val positive" id="vito-global-bal">0$</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Форма продажи -->
+    <div class="section-block glass-card">
+      <h2 class="section-title">Новая продажа</h2>
+      <div class="vito-isolate-badge">🔒 Данные изолированы от общей статистики</div>
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label">Сумма ($)</label>
+          <div class="vito-amount-wrap">
+            <input type="number" id="vito-amount" class="neon-input" placeholder="0" min="0" step="any" />
+            <span class="vito-amount-preview" id="vito-amount-preview"></span>
+          </div>
+        </div>
+        <div class="form-group flex-2">
+          <label class="form-label">Описание товара</label>
+          <input type="text" id="vito-desc" class="neon-input" placeholder="Например: Спортивная машина…" />
+        </div>
+      </div>
+      <button id="vito-list-btn" class="add-op-btn vito-list-btn">
+        💰 Выставить на продажу
+      </button>
+    </div>
+
+    <!-- История продаж 5VITO -->
+    <div class="section-block glass-card">
+      <h2 class="section-title">Локальная история продаж</h2>
+      <div id="vito-history" class="vito-history-list"></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- НИЖНЯЯ НАВИГАЦИЯ (Bottom Navigation Bar)                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<nav class="bottom-nav" role="navigation" aria-label="Основная навигация">
+  <button class="nav-btn" data-tab="dashboard"  id="nav-dashboard">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-label">Главная</span>
+  </button>
+  <button class="nav-btn" data-tab="statistics" id="nav-statistics">
+    <span class="nav-icon">📊</span>
+    <span class="nav-label">Статистика</span>
+  </button>
+  <button class="nav-btn" data-tab="shift"      id="nav-shift">
+    <span class="nav-icon">⏱️</span>
+    <span class="nav-label">Смена</span>
+  </button>
+  <button class="nav-btn" data-tab="insights"   id="nav-insights">
+    <span class="nav-icon">💡</span>
+    <span class="nav-label">Инсайты</span>
+  </button>
+  <button class="nav-btn nav-vito" data-tab="vito" id="nav-vito">
+    <span class="nav-icon">💎</span>
+    <span class="nav-label">5ВИТО</span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- МОДАЛЬНЫЕ ОКНА                                            -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+
+<!-- Настройки баланса и целей -->
+<div id="settings-modal" class="modal-overlay" style="display:none">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>⚙️ Настройки</h3>
+      <button class="modal-close-btn" id="btn-settings-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="settings-section">
+        <h4>💰 Текущий баланс</h4>
+        <p class="settings-desc">Установите ваш реальный баланс в кошельке GTA RP.</p>
+        <div class="form-group">
+          <label class="form-label">Баланс ($)</label>
+          <input type="number" id="set-balance" class="neon-input" placeholder="0" step="any" />
+        </div>
+      </div>
+      <div class="settings-section">
+        <h4>🎯 Цель накопления</h4>
+        <p class="settings-desc">При достижении цели вы получите уведомление.</p>
+        <div class="form-group">
+          <label class="form-label">Сумма цели ($)</label>
+          <input type="number" id="set-goal" class="neon-input" placeholder="0" step="any" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Описание цели</label>
+          <input type="text" id="set-goal-desc" class="neon-input" placeholder="Например: Lambo 🚗" />
+        </div>
+      </div>
+      <button id="btn-settings-save" class="add-op-btn">💾 Сохранить настройки</button>
+    </div>
+  </div>
+</div>
+
+<!-- Поздравление с целью -->
+<div id="goal-modal" class="modal-overlay" style="display:none">
+  <div class="modal-content goal-modal-content">
+    <div class="goal-achievement-icon">🎉</div>
+    <h2>Поздравляем!</h2>
+    <p>Вы достигли цели:</p>
+    <p class="goal-desc-text" id="goal-modal-desc"></p>
+    <div class="goal-amount-display" id="goal-modal-amount"></div>
+    <p>Отличная работа! 🎊</p>
+    <button id="btn-close-goal" class="add-op-btn">Закрыть</button>
+  </div>
+</div>
+
+<!-- Напоминание -->
+<div id="reminder-modal" class="modal-overlay" style="display:none">
+  <div class="modal-content reminder-content">
+    <div class="reminder-icon">⏰</div>
+    <h3>Напоминание</h3>
+    <p>Не забудьте внести операции за сегодня!</p>
+    <p class="reminder-sub">Это поможет точнее вести учёт финансов.</p>
+    <button id="btn-reminder-ok" class="add-op-btn">✅ Понятно</button>
+  </div>
+</div>
+
+<!-- ─────────────────── СКРИПТЫ ──────────────────────────── -->
+<script type="module" src="./src/main.ts"></script>
+
+</body>
+</html>

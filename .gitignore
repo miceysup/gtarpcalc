@@ -1,0 +1,19 @@
+# Зависимости
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+# Сборки Wails
+build/bin/
+build/windows/
+build/darwin/
+build/linux/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Логи и временные файлы
+*.log
+tmp/
